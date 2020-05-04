@@ -5,27 +5,28 @@ export class Product extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { products: [], loading: true };
+        this.state = { products: [], loading: true, productFilePath: "", retailerProductFilePath: "" };
     }
 
     componentDidMount() {
         this.getProductCodeTypes();
     }
 
-    static renderProductCodeTpyesTable(products) {
+    static renderProductCodeTypesTable(products) {
         return (
             <table className='table table-striped' aria-labelledby="tabelLabel">
                 <thead>
                     <tr>
-                        <th>ProductId</th>
-                        <th>ProductName</th>
-                        <th>CodeType</th>
+                        <th>Product Id</th>
+                        <th>Product Name</th>
+                        <th>Code Type</th>
                         <th>Code</th>
                     </tr>
                 </thead>
                 <tbody>
                     {products.map(product =>
                         <tr key={product.productId}>
+                            <td>{product.productId}</td>
                             <td>{product.productName}</td>
                             <td>{product.retailerProductCodeType}</td>
                             <td>{product.retailerProductCode}</td>
@@ -39,12 +40,14 @@ export class Product extends Component {
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : Product.renderProductCodeTpyesTable(this.state.products);
+            : Product.renderProductCodeTypesTable(this.state.products);
 
         return (
             <div>
                 <h1 id="tabelLabel" >Distinct Product Code Type</h1>
                 <p>Reading from Files</p>
+                <p>Product File Path : {this.state.productFilePath}</p>
+                <p>Retailer Product File Path : {this.state.retailerProductFilePath}</p>
                 {contents}
             </div>
         );
@@ -53,6 +56,7 @@ export class Product extends Component {
     async getProductCodeTypes() {
         const response = await fetch('product');
         const data = await response.json();
-        this.setState({ forecasts: data, loading: false });
+        debugger;
+        this.setState({ products: data.productCodes, loading: false, productFilePath: data.productFilePath, retailerProductFilePath: data.retailerProductFilePath });
     }
 }

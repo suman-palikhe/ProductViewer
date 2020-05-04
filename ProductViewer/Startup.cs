@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProductViewer.Contracts;
+using ProductViewer.Implementation;
 
 namespace ProductViewer
 {
@@ -27,6 +29,11 @@ namespace ProductViewer
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddSingleton<IFileReader, FileReader>();
+            services.AddTransient<IProductParser, ProductParser>();
+            services.AddTransient<IRetailerProductParser, RetailerProductParser>();
+            services.AddTransient<IProductAggregator, ProductAggregator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
