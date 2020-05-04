@@ -1,4 +1,4 @@
-# ProductViewer
+# Product Viewer
 
 This is a .Net Core Web Solution using React as front end.
 
