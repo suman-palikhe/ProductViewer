@@ -12,5 +12,7 @@ namespace ProductViewer.Models
         public string RetailerProductFilePath { get; set; }
 
         public List<ProductCodeView> ProductCodes { get; set; }
+
+        public string ErrorMessage { get; set; }
     }
 }

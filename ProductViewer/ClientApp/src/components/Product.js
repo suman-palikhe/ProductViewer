@@ -5,7 +5,13 @@ export class Product extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { products: [], loading: true, productFilePath: "", retailerProductFilePath: "" };
+        this.state = {
+            products: [],
+            loading: true,
+            productFilePath: "",
+            retailerProductFilePath: "",
+            errorMessage: ""
+        };
     }
 
     componentDidMount() {
@@ -37,10 +43,21 @@ export class Product extends Component {
         );
     }
 
+    static renderError(errorMessage) {
+        return (
+            <div style={{ color: 'red' }}>
+                <h2>Error Occured</h2>
+                Error Message : {errorMessage}
+            </div>
+        );
+    }
+
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : Product.renderProductCodeTypesTable(this.state.products);
+            : this.state.errorMessage && this.state.errorMessage !== '' ?
+                Product.renderError(this.state.errorMessage)
+                : Product.renderProductCodeTypesTable(this.state.products);
 
         return (
             <div>
@@ -56,7 +73,12 @@ export class Product extends Component {
     async getProductCodeTypes() {
         const response = await fetch('product');
         const data = await response.json();
-        debugger;
-        this.setState({ products: data.productCodes, loading: false, productFilePath: data.productFilePath, retailerProductFilePath: data.retailerProductFilePath });
+        if (data.errorMessage && data.errorMessage !== '') {
+            this.setState({ loading: false, errorMessage: data.errorMessage, productFilePath: data.productFilePath, retailerProductFilePath: data.retailerProductFilePath });
+        }
+        else {
+            this.setState({ products: data.productCodes, loading: false, productFilePath: data.productFilePath, retailerProductFilePath: data.retailerProductFilePath });
+        }
+
     }
 }

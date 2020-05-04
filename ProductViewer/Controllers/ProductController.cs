@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProductViewer.Contracts;
 using ProductViewer.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -27,14 +28,31 @@ namespace ProductViewer.Controllers
             var productFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Files", ProductFile);
             var retailerProductFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Files", RetailerProducts);
 
-            var result = await _productAggregator.GetDistinctCodeTypes(productFilePath, retailerProductFilePath);
-
-            return new ProductCodeViewModel()
+            try
             {
-                ProductCodes = result,
-                ProductFilePath = productFilePath,
-                RetailerProductFilePath = retailerProductFilePath
-            };
+                var result = await _productAggregator.GetDistinctCodeTypes(productFilePath, retailerProductFilePath);
+
+                throw new Exception("File Not Found");
+
+                return new ProductCodeViewModel()
+                {
+                    ProductCodes = result,
+                    ProductFilePath = productFilePath,
+                    RetailerProductFilePath = retailerProductFilePath
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new ProductCodeViewModel()
+                {
+                    ErrorMessage = ex.Message,
+                    ProductFilePath = productFilePath,
+                    RetailerProductFilePath = retailerProductFilePath
+                };
+            }
+
+            
         }
     }
 }
