@@ -32,8 +32,6 @@ namespace ProductViewer.Controllers
             {
                 var result = await _productAggregator.GetDistinctCodeTypes(productFilePath, retailerProductFilePath);
 
-                throw new Exception("File Not Found");
-
                 return new ProductCodeViewModel()
                 {
                     ProductCodes = result,

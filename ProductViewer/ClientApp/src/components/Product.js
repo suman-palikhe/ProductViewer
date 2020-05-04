@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 
-export class Product extends Component {
+export class Product extends React.Component {
     static displayName = 'Product Details';
 
     constructor(props) {
@@ -18,32 +18,36 @@ export class Product extends Component {
         this.getProductCodeTypes();
     }
 
-    static renderProductCodeTypesTable(products) {
+    renderProductCodeTypesTable(products) {
         return (
-            <table className='table table-striped' aria-labelledby="tabelLabel">
-                <thead>
-                    <tr>
-                        <th>Product Id</th>
-                        <th>Product Name</th>
-                        <th>Code Type</th>
-                        <th>Code</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map(product =>
-                        <tr key={product.productId}>
-                            <td>{product.productId}</td>
-                            <td>{product.productName}</td>
-                            <td>{product.retailerProductCodeType}</td>
-                            <td>{product.retailerProductCode}</td>
+            <div>
+                
+                <p>Change the contents in the above files and press reload to see new results</p>
+                <table className='table table-striped' aria-labelledby="tabelLabel">
+                    <thead>
+                        <tr>
+                            <th>Product Id</th>
+                            <th>Product Name</th>
+                            <th>Code Type</th>
+                            <th>Code</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {products.map(product =>
+                            <tr key={`${product.productId}-${product.retailerProductCodeType}`}>
+                                <td>{product.productId}</td>
+                                <td>{product.productName}</td>
+                                <td>{product.retailerProductCodeType}</td>
+                                <td>{product.retailerProductCode}</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 
-    static renderError(errorMessage) {
+    renderError(errorMessage) {
         return (
             <div style={{ color: 'red' }}>
                 <h2>Error Occured</h2>
@@ -56,8 +60,8 @@ export class Product extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.state.errorMessage && this.state.errorMessage !== '' ?
-                Product.renderError(this.state.errorMessage)
-                : Product.renderProductCodeTypesTable(this.state.products);
+                this.renderError(this.state.errorMessage)
+                : this.renderProductCodeTypesTable(this.state.products);
 
         return (
             <div>
@@ -65,12 +69,17 @@ export class Product extends Component {
                 <p>Reading from Files</p>
                 <p>Product File Path : {this.state.productFilePath}</p>
                 <p>Retailer Product File Path : {this.state.retailerProductFilePath}</p>
+                <br />
+                <button onClick={() => { this.getProductCodeTypes(); }}> Reload </button>
+                <br />
+                <br />
                 {contents}
             </div>
         );
     }
 
     async getProductCodeTypes() {
+        this.setState({ loading: true, errorMessage: '' });
         const response = await fetch('product');
         const data = await response.json();
         if (data.errorMessage && data.errorMessage !== '') {
